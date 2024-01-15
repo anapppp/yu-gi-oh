@@ -89,13 +89,13 @@ async function drawSelectedCard(id) {
     state.cardSprites.type.innerText = "Atribute : " + cardData[id].type
 }
 
-async function setCardsField(id) {
+async function setCardsField(cardId) {
     await removeAllCardsImages();
     let computerCardId = await getRandomCardId()
     state.fieldCards.player.style.display = "block"
     state.fieldCards.computer.style.display = "block"
 
-    state.fieldCards.player.src = cardData[id].img
+    state.fieldCards.player.src = cardData[cardId].img
     state.fieldCards.computer.src = cardData[computerCardId].img
     let duelResults = await checkDuelResults(cardId, computerCardId)
     await updateScores();
@@ -111,10 +111,49 @@ async function removeAllCardsImages() {
     imgElements.forEach((img) => img.remove())
 }
 
-function init() {
+async function checkDuelResults(playerCardId, computerCardId) {
+    let duelResults = "DRAW";
+    let playerCard = cardData[playerCardId];
+
+    if (playerCard.WinOf.includes(computerCardId)) {
+        duelResults = "WIN";
+        playAudio(duelResults)
+        state.score.playerScore++
+    }
+    if (playerCard.LoseOf.includes(computerCardId)) {
+        duelResults = "LOSE";
+        playAudio(duelResults)
+        state.score.computerScore++
+    }
+
+    return duelResults
+}
+
+async function drawButton(text) {
+    state.actions.button.innerText = text
+    state.actions.button.style.display = "block"
+}
+
+async function updateScores() {
+    state.score.scoreBox.innerText = `Win: ${state.score.playerScore} | Lose: ${state.score.computerScore}`
+}
+
+async function init() {
     drawCards(5, state.playerSides.player1)
     drawCards(5, state.playerSides.computer)
 }
 
+async function resetDuel() {
+    state.cardSprites.avatar.src = "";
+    state.actions.button.style.display = "none"
+    state.fieldCards.player.style.display = "none"
+    state.fieldCards.computer.style.display = "none"
+    init()
+}
+
+async function playAudio(status) {
+    const audio = new Audio(`./src/assets/audios/${status}.wav`)
+    audio.play()
+}
 
 init();
