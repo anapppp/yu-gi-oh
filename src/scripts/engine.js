@@ -95,6 +95,10 @@ async function setCardsField(cardId) {
     state.fieldCards.player.style.display = "block"
     state.fieldCards.computer.style.display = "block"
 
+    state.cardSprites.avatar.src = ""
+    state.cardSprites.name.innerText = ""
+    state.cardSprites.type.innerText = ""
+
     state.fieldCards.player.src = cardData[cardId].img
     state.fieldCards.computer.src = cardData[computerCardId].img
     let duelResults = await checkDuelResults(cardId, computerCardId)
@@ -138,11 +142,6 @@ async function updateScores() {
     state.score.scoreBox.innerText = `Win: ${state.score.playerScore} | Lose: ${state.score.computerScore}`
 }
 
-async function init() {
-    drawCards(5, state.playerSides.player1)
-    drawCards(5, state.playerSides.computer)
-}
-
 async function resetDuel() {
     state.cardSprites.avatar.src = "";
     state.actions.button.style.display = "none"
@@ -154,6 +153,16 @@ async function resetDuel() {
 async function playAudio(status) {
     const audio = new Audio(`./src/assets/audios/${status}.wav`)
     audio.play()
+}
+
+
+async function init() {
+    drawCards(5, state.playerSides.player1)
+    drawCards(5, state.playerSides.computer)
+
+    const bgm = document.getElementById("bgm")
+    bgm.volume = 0.3
+    bgm.play();
 }
 
 init();
